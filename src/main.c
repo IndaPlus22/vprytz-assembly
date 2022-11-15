@@ -2,34 +2,74 @@
 #include <string.h>
 #include <stdlib.h>
 
+// valid instructions
+static char *valid_instructions[8] = {"add", "sub", "set", "jeq", "j", "input", "print", "exit"};
+
+int num_lines(char *input)
+{
+    int count = 0;
+    char *line = strtok(input, "\n");
+    while (line != NULL)
+    {
+        count++;
+        line = strtok(NULL, "\n");
+    }
+    return count;
+}
+
 char *read_instructions(char *input)
 {
-    char *token;
-
     // get first line
-    token = strtok(input, "\n");
+    char *line = strtok(input, "\n");
 
-    // walk through each line
-    while (token != NULL)
+    // walk through other lines
+    while (line != NULL)
     {
-        // iterate over token, ignore everything after //
-        for (int i = 0; i < strlen(token); i++)
+
+        // check that line starts with any of the valid_instructions
+        for (int i = 0; i < 8; i++)
         {
-            if (token[i] == '/' && token[i + 1] == '/')
+            if (strncmp(line, valid_instructions[i], strlen(valid_instructions[i])) == 0)
             {
-                token[i] = '\0';
+                printf("%s\n", line);
                 break;
             }
-            // print everything before //
-            printf("%c", token[i]);
         }
-        printf("\n");
-
-        token = strtok(NULL, "\n");
+        line = strtok(NULL, "\n");
     }
-
-    return input;
 }
+
+// char *read_instructions1(char *input)
+// {
+//     char *token;
+//     // 12
+//     char *instructions = malloc(120 * num_lines(input) * sizeof(char));
+
+//     // get first line
+//     token = strtok(input, "\n");
+
+//     // walk through each line
+//     while (token != NULL)
+//     {
+//         // iterate over token, ignore everything after //
+//         for (int i = 0; i < strlen(token); i++)
+//         {
+//             if (token[i] == '/' && token[i + 1] == '/')
+//             {
+//                 token[i] = '\0';
+//                 break;
+//             }
+//             // print everything before //
+//             // printf("%c", token[i]);
+//             strncat(instructions, token[i], 1);
+//         }
+//         strncat(instructions, "\n", 1);
+
+//         token = strtok(NULL, "\n");
+//     }
+
+//     return input;
+// }
 
 int main(int argc, char **argv)
 {
