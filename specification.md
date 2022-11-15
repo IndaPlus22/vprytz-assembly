@@ -10,12 +10,12 @@
 
 ### Register Instructions
 
-| **Instruction** | **Description**                     |
-| :-------------- | :---------------------------------- | --- | -------------------- |
-| `add`           | `rt = rt + rs + imm`                |
-| `sub`           | `rt = rt - rs - imm`                |
-| `set`           | `rt = rs + imm`                     |
-| `jeq`           | Jump one line if `(rt == rs && imm) |     | (rt != rs && !imm)`. |
+| **Instruction** | **Description**                                             |
+| :-------------- | :---------------------------------------------------------- |
+| `add`           | `rt = rt + rs + imm`                                        |
+| `sub`           | `rt = rt - rs - imm`                                        |
+| `set`           | `rt = rs + imm`                                             |
+| `jeq`           | Jump one line if `(rt == rs && imm) \| (rt != rs && !imm)`. |
 
 ### Jump Instructions
 
