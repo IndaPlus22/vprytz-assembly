@@ -47,13 +47,13 @@ char *read_instructions(char *input)
         {
             // example: add #1 #2 0
             // above will set #1 = #2 + 0
-            // we want to get rd, rs, rt
+            // we want to get rs, rt, imm
             // without modifying the original string
-            char *rd = malloc(sizeof(char) * 2);
             char *rs = malloc(sizeof(char) * 2);
             char *rt = malloc(sizeof(char) * 2);
+            char *imm = malloc(sizeof(char) * 2);
 
-            // get rd, rs, rt
+            // get rs, rt, imm
             int i = 0;
             int x = 0;
             for (int j = 4; j < strlen(line); j++)
@@ -66,15 +66,15 @@ char *read_instructions(char *input)
 
                 if (x == 0)
                 {
-                    rd[i] = line[j];
+                    rs[i] = line[j];
                 }
                 else if (x == 1)
                 {
-                    rs[i] = line[j];
+                    rt[i] = line[j];
                 }
                 else if (x == 2)
                 {
-                    rt[i] = line[j];
+                    imm[i] = line[j];
                 }
 
                 i++;
@@ -85,20 +85,53 @@ char *read_instructions(char *input)
                 }
             }
 
-            // print rd, rs, rt
-            printf("add rd: %s, rs: %s, rt: %s\n", rd, rs, rt);
+            // print rs, rt, imm
+            printf("add rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
         }
         if (strcmp(word, "sub") == 0)
         {
             // example: sub #3 #0 1
             // above will set #3 = #0 - 1
-            // we want to get rd, rs, rt
-            char *rd = strtok(line, "sub ");
-            char *rs = strtok(NULL, " ");
-            char *rt = strtok(NULL, " ");
+            // we want to get rs, rt, imm
+            // without modifying the original string
+            char *rs = malloc(sizeof(char) * 2);
+            char *rt = malloc(sizeof(char) * 2);
+            char *imm = malloc(sizeof(char) * 2);
 
-            // print rd, rs, rt
-            printf("sub rd: %s, rs: %s, rt: %s\n", rd, rs, rt);
+            // get rs, rt, imm
+            int i = 0;
+            int x = 0;
+            for (int j = 4; j < strlen(line); j++)
+            {
+                if (line[j] == ' ')
+                {
+                    x++;
+                    i = 0;
+                }
+
+                if (x == 0)
+                {
+                    rs[i] = line[j];
+                }
+                else if (x == 1)
+                {
+                    rt[i] = line[j];
+                }
+                else if (x == 2)
+                {
+                    imm[i] = line[j];
+                }
+
+                i++;
+
+                if (x == 3)
+                {
+                    break;
+                }
+            }
+
+            // print rs, rt, imm
+            printf("sub rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
         }
 
         // // check that line starts with any of the valid_instructions
