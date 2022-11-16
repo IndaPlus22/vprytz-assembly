@@ -22,21 +22,98 @@ char *read_instructions(char *input)
     // get first line
     char *line = strtok(input, "\n");
 
+    char str[10000];
+    char *instructions = str;
+
     // walk through other lines
     while (line != NULL)
     {
+        char *word = malloc(sizeof(char) * 100);
 
-        // check that line starts with any of the valid_instructions
-        for (int i = 0; i < 8; i++)
+        // iterate through line[i] until " " is found
+        for (int i = 0; i < strlen(line); i++)
         {
-            if (strncmp(line, valid_instructions[i], strlen(valid_instructions[i])) == 0)
+            if (line[i] == ' ')
             {
-                printf("%s\n", line);
                 break;
             }
+            word[i] = line[i];
         }
+
+        // print word
+        printf("%s\n", word);
+
+        if (strcmp(word, "add") == 0)
+        {
+            // example: add #1 #2 0
+            // above will set #1 = #2 + 0
+            // we want to get rd, rs, rt
+            // without modifying the original string
+            char *rd = malloc(sizeof(char) * 2);
+            char *rs = malloc(sizeof(char) * 2);
+            char *rt = malloc(sizeof(char) * 2);
+
+            // get rd, rs, rt
+            int i = 0;
+            int x = 0;
+            for (int j = 4; j < strlen(line); j++)
+            {
+                if (line[j] == ' ')
+                {
+                    x++;
+                    i = 0;
+                }
+
+                if (x == 0)
+                {
+                    rd[i] = line[j];
+                }
+                else if (x == 1)
+                {
+                    rs[i] = line[j];
+                }
+                else if (x == 2)
+                {
+                    rt[i] = line[j];
+                }
+
+                i++;
+
+                if (x == 3)
+                {
+                    break;
+                }
+            }
+
+            // print rd, rs, rt
+            printf("add rd: %s, rs: %s, rt: %s\n", rd, rs, rt);
+        }
+        if (strcmp(word, "sub") == 0)
+        {
+            // example: sub #3 #0 1
+            // above will set #3 = #0 - 1
+            // we want to get rd, rs, rt
+            char *rd = strtok(line, "sub ");
+            char *rs = strtok(NULL, " ");
+            char *rt = strtok(NULL, " ");
+
+            // print rd, rs, rt
+            printf("sub rd: %s, rs: %s, rt: %s\n", rd, rs, rt);
+        }
+
+        // // check that line starts with any of the valid_instructions
+        // for (int i = 0; i < 8; i++)
+        // {
+        //     if (strncmp(line, valid_instructions[i], strlen(valid_instructions[i])) == 0)
+        //     {
+        //         printf("%s\n", line);
+        //         break;
+        //     }
+        // }
         line = strtok(NULL, "\n");
     }
+
+    return instructions;
 }
 
 // char *read_instructions1(char *input)
@@ -113,6 +190,8 @@ int main(int argc, char **argv)
     if (buffer)
     {
         char *instructions = read_instructions(buffer);
+
+        // print contents of instructions
     }
     else
     {
