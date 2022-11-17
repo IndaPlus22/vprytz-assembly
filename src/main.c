@@ -222,7 +222,7 @@ void run_instructions(int *instructions)
     while (ip < 1000)
     {
         // get current instruction as int array fron instructions (using ip)
-        int *instruction = &(instructions)[ip];
+        int *instruction = &instructions[ip];
 
         // instruction convertion
         // add -> 0
@@ -234,37 +234,38 @@ void run_instructions(int *instructions)
         // print -> 6
         // exit -> 7
 
-        // set rt, rs, imm
+        // set op, rt, rs, imm
+        int op = instruction[0];
         int rt = instruction[1];
         int rs = instruction[2];
         int imm = instruction[3];
 
         // print whole instruction
-        printf("running instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
+        printf("running instruction: %d, %d, %d, %d\n", op, rt, rs, imm);
 
         // print registers
         printf("registers: %d, %d, %d, %d\n", registers[0], registers[1], registers[2], registers[3]);
 
         // add
-        if (instruction[0] == 0)
+        if (op == 0)
         {
             registers[rt] = registers[rt] + registers[rs] + imm;
         }
 
         // sub
-        if (instruction[0] == 1)
+        if (op == 1)
         {
             registers[rt] = registers[rt] - registers[rs] - imm;
         }
 
         // set
-        if (instruction[0] == 2)
+        if (op == 2)
         {
             registers[rt] = registers[rs] + imm;
         }
 
         // jeq
-        if (instruction[0] == 3)
+        if (op == 3)
         {
             if (registers[rt] == registers[rs] && imm)
             {
@@ -277,13 +278,13 @@ void run_instructions(int *instructions)
         }
 
         // j
-        if (instruction[0] == 4)
+        if (op == 4)
         {
             ip = ip + imm;
         }
 
         // input
-        if (instruction[0] == 5)
+        if (op == 5)
         {
             int input;
             scanf("%d", &input);
@@ -291,13 +292,13 @@ void run_instructions(int *instructions)
         }
 
         // print
-        if (instruction[0] == 6)
+        if (op == 6)
         {
             printf("%d", registers[1]);
         }
 
         // exit
-        if (instruction[0] == 7)
+        if (op == 7)
         {
             exit(0);
         }
