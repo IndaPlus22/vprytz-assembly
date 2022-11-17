@@ -197,7 +197,7 @@ void read_instructions(char *input, int instructions[][4])
         free(imm);
 
         // print instruction
-        printf("instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
+        // printf("instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
 
         // add instruction to instructions
         instructions[counter][0] = instruction[0];
@@ -225,7 +225,7 @@ void run_instructions(int instructions[][4])
     while (ip < 100)
     {
         // get current instruction as int array fron instructions (using ip)
-        int *instruction = &instructions[ip];
+        int *instruction = instructions[ip];
 
         // instruction convertion
         // add -> 0
@@ -244,10 +244,10 @@ void run_instructions(int instructions[][4])
         int imm = instruction[3];
 
         // print whole instruction
-        printf("running instruction: %d, %d, %d, %d\n", op, rt, rs, imm);
+        // printf("running instruction: %d, %d, %d, %d\n", op, rt, rs, imm);
 
         // print registers
-        printf("registers: %d, %d, %d, %d\n", registers[0], registers[1], registers[2], registers[3]);
+        // printf("registers: %d, %d, %d, %d\n", registers[0], registers[1], registers[2], registers[3]);
 
         // add
         if (op == 0)
