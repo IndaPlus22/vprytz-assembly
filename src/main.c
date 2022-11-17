@@ -201,6 +201,12 @@ void read_instructions(char *input, int *instructions)
 
         // add instruction to instructions
         instructions[counter] = *instruction;
+
+        // check that this was invalid instruction, only increase counter if so
+        if (instruction[0] != -1)
+        {
+            counter++;
+        }
     }
 }
 
@@ -216,7 +222,7 @@ void run_instructions(int *instructions)
     while (ip < 1000)
     {
         // get current instruction as int array fron instructions (using ip)
-        int *instruction = &instructions[ip];
+        int *instruction = &(instructions)[ip];
 
         // instruction convertion
         // add -> 0
@@ -232,6 +238,12 @@ void run_instructions(int *instructions)
         int rt = instruction[1];
         int rs = instruction[2];
         int imm = instruction[3];
+
+        // print whole instruction
+        printf("running instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
+
+        // print registers
+        printf("registers: %d, %d, %d, %d\n", registers[0], registers[1], registers[2], registers[3]);
 
         // add
         if (instruction[0] == 0)
@@ -335,9 +347,9 @@ int main(int argc, char **argv)
 
     if (buffer)
     {
-        int *instructions = malloc(sizeof(int) * 2000);
-        read_instructions(buffer, instructions);
+        int *instructions = malloc(100000 * sizeof(int) * 4);
 
+        read_instructions(buffer, instructions);
         run_instructions(instructions);
     }
     else
