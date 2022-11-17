@@ -26,18 +26,6 @@ int map_instruction_int(char *instruction)
     return -1;
 }
 
-int num_lines(char *input)
-{
-    int count = 0;
-    char *line = strtok(input, "\n");
-    while (line != NULL)
-    {
-        count++;
-        line = strtok(NULL, "\n");
-    }
-    return count;
-}
-
 // function that parses rs, rt, imm
 void parse_rs_rt_imm(char *line, char *rs, char *rt, char *imm)
 {
@@ -73,11 +61,9 @@ void parse_rs_rt_imm(char *line, char *rs, char *rt, char *imm)
             break;
         }
     }
-
-    // free up memory
 }
 
-int *read_instructions(char *input)
+void read_instructions(char *input, int *instructions)
 {
     // get first line
     char *line = strtok(input, "\n");
@@ -91,7 +77,6 @@ int *read_instructions(char *input)
     //     [0,   1,2,0]
     // ]
 
-    int *instructions; // array of instructions
     int counter = 0;
 
     // walk through other lines
@@ -213,42 +198,101 @@ int *read_instructions(char *input)
 
         // print instruction
         printf("instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
-    }
 
-    return instructions;
+        // add instruction to instructions
+        instructions[counter] = *instruction;
+    }
 }
 
-// char *read_instructions1(char *input)
-// {
-//     char *token;
-//     // 12
-//     char *instructions = malloc(120 * num_lines(input) * sizeof(char));
+void run_instructions(int *instructions)
+{
+    // registers
+    int registers[4] = {0, 0, 0, 0};
 
-//     // get first line
-//     token = strtok(input, "\n");
+    // instruction pointer
+    int ip = 0;
 
-//     // walk through each line
-//     while (token != NULL)
-//     {
-//         // iterate over token, ignore everything after //
-//         for (int i = 0; i < strlen(token); i++)
-//         {
-//             if (token[i] == '/' && token[i + 1] == '/')
-//             {
-//                 token[i] = '\0';
-//                 break;
-//             }
-//             // print everything before //
-//             // printf("%c", token[i]);
-//             strncat(instructions, token[i], 1);
-//         }
-//         strncat(instructions, "\n", 1);
+    // run instructions
+    while (ip < 1000)
+    {
+        // get current instruction as int array fron instructions (using ip)
+        int *instruction = &instructions[ip];
 
-//         token = strtok(NULL, "\n");
-//     }
+        // instruction convertion
+        // add -> 0
+        // sub -> 1
+        // set -> 2
+        // jeq -> 3
+        // j -> 4
+        // input -> 5
+        // print -> 6
+        // exit -> 7
 
-//     return input;
-// }
+        // set rt, rs, imm
+        int rt = instruction[1];
+        int rs = instruction[2];
+        int imm = instruction[3];
+
+        // add
+        if (instruction[0] == 0)
+        {
+            registers[rt] = registers[rt] + registers[rs] + imm;
+        }
+
+        // sub
+        if (instruction[0] == 1)
+        {
+            registers[rt] = registers[rt] - registers[rs] - imm;
+        }
+
+        // set
+        if (instruction[0] == 2)
+        {
+            registers[rt] = registers[rs] + imm;
+        }
+
+        // jeq
+        if (instruction[0] == 3)
+        {
+            if (registers[rt] == registers[rs] && imm)
+            {
+                ip += 1;
+            }
+            if (registers[rt] != registers[rs] && !imm)
+            {
+                ip += 1;
+            }
+        }
+
+        // j
+        if (instruction[0] == 4)
+        {
+            ip = ip + imm;
+        }
+
+        // input
+        if (instruction[0] == 5)
+        {
+            int input;
+            scanf("%d", &input);
+            registers[1] = input;
+        }
+
+        // print
+        if (instruction[0] == 6)
+        {
+            printf("%d", registers[1]);
+        }
+
+        // exit
+        if (instruction[0] == 7)
+        {
+            exit(0);
+        }
+
+        ip++;
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -291,7 +335,10 @@ int main(int argc, char **argv)
 
     if (buffer)
     {
-        int *instructions = read_instructions(buffer);
+        int *instructions = malloc(sizeof(int) * 2000);
+        read_instructions(buffer, instructions);
+
+        run_instructions(instructions);
     }
     else
     {
