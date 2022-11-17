@@ -17,6 +17,45 @@ int num_lines(char *input)
     return count;
 }
 
+// function that parses rs, rt, imm
+void parse_rs_rt_imm(char *line, char *rs, char *rt, char *imm)
+{
+
+    // get rs, rt, imm
+    int i = 0;
+    int x = 0;
+    for (int j = 4; j < strlen(line); j++)
+    {
+        if (line[j] == ' ')
+        {
+            x++;
+            i = -1;
+        }
+
+        if (x == 0)
+        {
+            rs[i] = line[j];
+        }
+        else if (x == 1)
+        {
+            rt[i] = line[j];
+        }
+        else if (x == 2)
+        {
+            imm[i] = line[j];
+        }
+
+        i++;
+
+        if (x == 3)
+        {
+            break;
+        }
+    }
+
+    // free up memory
+}
+
 char *read_instructions(char *input)
 {
     // get first line
@@ -40,9 +79,6 @@ char *read_instructions(char *input)
             word[i] = line[i];
         }
 
-        // print word
-        printf("%s\n", word);
-
         if (strcmp(word, "add") == 0)
         {
             // example: add #1 #2 0
@@ -54,36 +90,7 @@ char *read_instructions(char *input)
             char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
-            int i = 0;
-            int x = 0;
-            for (int j = 4; j < strlen(line); j++)
-            {
-                if (line[j] == ' ')
-                {
-                    x++;
-                    i = 0;
-                }
-
-                if (x == 0)
-                {
-                    rs[i] = line[j];
-                }
-                else if (x == 1)
-                {
-                    rt[i] = line[j];
-                }
-                else if (x == 2)
-                {
-                    imm[i] = line[j];
-                }
-
-                i++;
-
-                if (x == 3)
-                {
-                    break;
-                }
-            }
+            parse_rs_rt_imm(line, rs, rt, imm);
 
             // print rs, rt, imm
             printf("add rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
@@ -99,51 +106,92 @@ char *read_instructions(char *input)
             char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
-            int i = 0;
-            int x = 0;
-            for (int j = 4; j < strlen(line); j++)
-            {
-                if (line[j] == ' ')
-                {
-                    x++;
-                    i = 0;
-                }
-
-                if (x == 0)
-                {
-                    rs[i] = line[j];
-                }
-                else if (x == 1)
-                {
-                    rt[i] = line[j];
-                }
-                else if (x == 2)
-                {
-                    imm[i] = line[j];
-                }
-
-                i++;
-
-                if (x == 3)
-                {
-                    break;
-                }
-            }
+            parse_rs_rt_imm(line, rs, rt, imm);
 
             // print rs, rt, imm
             printf("sub rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
         }
 
-        // // check that line starts with any of the valid_instructions
-        // for (int i = 0; i < 8; i++)
-        // {
-        //     if (strncmp(line, valid_instructions[i], strlen(valid_instructions[i])) == 0)
-        //     {
-        //         printf("%s\n", line);
-        //         break;
-        //     }
-        // }
+        if (strcmp(word, "set") == 0)
+        {
+            // example: set #3 #0 1
+            // above will set #3 = #0 + 1
+            // we want to get rs, rt, imm
+            // without modifying the original string
+            char *rs = malloc(sizeof(char) * 2);
+            char *rt = malloc(sizeof(char) * 2);
+            char *imm = malloc(sizeof(char) * 2);
+
+            // get rs, rt, imm
+            parse_rs_rt_imm(line, rs, rt, imm);
+
+            // print rs, rt, imm
+            printf("set rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+        }
+
+        if (strcmp(word, "jeq") == 0)
+        {
+            // example: jeq #2 #0 0
+            // above will jump one line if #2 == #0 && 0
+            // we want to get rs, rt, imm
+            // without modifying the original string
+            char *rs = malloc(sizeof(char) * 2);
+            char *rt = malloc(sizeof(char) * 2);
+            char *imm = malloc(sizeof(char) * 2);
+
+            // get rs, rt, imm
+            parse_rs_rt_imm(line, rs, rt, imm);
+
+            // print rs, rt, imm
+            printf("jeq rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+        }
+
+        if (strcmp(word, "j") == 0)
+        {
+            // example: j 0
+            // above will jump 0 lines
+            // we want to get imm
+            // without modifying the original string
+            char *imm = malloc(sizeof(char) * 2);
+
+            // get imm
+            int i = 0;
+            for (int j = 2; j < strlen(line); j++)
+            {
+                if (line[j] == ' ')
+                {
+                    break;
+                }
+                imm[i] = line[j];
+                i++;
+            }
+
+            // print imm
+            printf("j imm: %s\n", imm);
+        }
+
+        if (strcmp(word, "input") == 0)
+        {
+            // print input
+            printf("input\n");
+        }
+
+        if (strcmp(word, "exit") == 0)
+        {
+            // print input
+            printf("exit\n");
+        }
+
+        if (strcmp(word, "print") == 0)
+        {
+            // print input
+            printf("print\n");
+        }
+
         line = strtok(NULL, "\n");
+
+        // free word
+        free(word);
     }
 
     return instructions;
