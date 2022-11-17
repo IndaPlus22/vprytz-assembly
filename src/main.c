@@ -63,7 +63,7 @@ void parse_rs_rt_imm(char *line, char *rs, char *rt, char *imm)
     }
 }
 
-void read_instructions(char *input, int *instructions)
+void read_instructions(char *input, int instructions[][4])
 {
     // get first line
     char *line = strtok(input, "\n");
@@ -200,7 +200,10 @@ void read_instructions(char *input, int *instructions)
         printf("instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
 
         // add instruction to instructions
-        instructions[counter] = *instruction;
+        instructions[counter][0] = instruction[0];
+        instructions[counter][1] = instruction[1];
+        instructions[counter][2] = instruction[2];
+        instructions[counter][3] = instruction[3];
 
         // check that this was invalid instruction, only increase counter if so
         if (instruction[0] != -1)
@@ -210,7 +213,7 @@ void read_instructions(char *input, int *instructions)
     }
 }
 
-void run_instructions(int *instructions)
+void run_instructions(int instructions[][4])
 {
     // registers
     int registers[4] = {0, 0, 0, 0};
@@ -219,7 +222,7 @@ void run_instructions(int *instructions)
     int ip = 0;
 
     // run instructions
-    while (ip < 1000)
+    while (ip < 100)
     {
         // get current instruction as int array fron instructions (using ip)
         int *instruction = &instructions[ip];
