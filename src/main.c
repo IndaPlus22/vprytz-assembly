@@ -5,6 +5,27 @@
 // valid instructions
 static char *valid_instructions[8] = {"add", "sub", "set", "jeq", "j", "input", "print", "exit"};
 
+// instruction convertion
+// add -> 0
+// sub -> 1
+// set -> 2
+// jeq -> 3
+// j -> 4
+// input -> 5
+// print -> 6
+// exit -> 7
+int map_instruction_int(char *instruction)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        if (strcmp(instruction, valid_instructions[i]) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 int num_lines(char *input)
 {
     int count = 0;
@@ -56,18 +77,29 @@ void parse_rs_rt_imm(char *line, char *rs, char *rt, char *imm)
     // free up memory
 }
 
-char *read_instructions(char *input)
+int *read_instructions(char *input)
 {
     // get first line
     char *line = strtok(input, "\n");
 
-    char str[10000];
-    char *instructions = str;
+    // char str[10000];
+    // char *instructions = str;
+
+    // example:
+    // instructions = [
+    //      add #1 #2 0
+    //     [0,   1,2,0]
+    // ]
+
+    int *instructions; // array of instructions
+    int counter = 0;
 
     // walk through other lines
     while (line != NULL)
     {
         char *word = malloc(sizeof(char) * 100);
+        int instruction[4];
+        // int *instruction[4] = malloc(sizeof(int) * 4);
 
         // iterate through line[i] until " " is found
         for (int i = 0; i < strlen(line); i++)
@@ -79,21 +111,30 @@ char *read_instructions(char *input)
             word[i] = line[i];
         }
 
+        // map instruction word to int
+        instruction[0] = map_instruction_int(word);
+        instruction[1] = 0;
+        instruction[2] = 0;
+        instruction[3] = 0;
+
+        // allocate rs, rt, imm
+        char *rs = malloc(sizeof(char) * 2);
+        char *rt = malloc(sizeof(char) * 2);
+        char *imm = malloc(sizeof(char) * 2);
+
         if (strcmp(word, "add") == 0)
         {
             // example: add #1 #2 0
             // above will set #1 = #2 + 0
             // we want to get rs, rt, imm
             // without modifying the original string
-            char *rs = malloc(sizeof(char) * 2);
-            char *rt = malloc(sizeof(char) * 2);
-            char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
             parse_rs_rt_imm(line, rs, rt, imm);
 
-            // print rs, rt, imm
-            printf("add rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+            instruction[1] = atoi(&rs[1]);
+            instruction[2] = atoi(&rt[1]);
+            instruction[3] = atoi(imm);
         }
         if (strcmp(word, "sub") == 0)
         {
@@ -101,15 +142,13 @@ char *read_instructions(char *input)
             // above will set #3 = #0 - 1
             // we want to get rs, rt, imm
             // without modifying the original string
-            char *rs = malloc(sizeof(char) * 2);
-            char *rt = malloc(sizeof(char) * 2);
-            char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
             parse_rs_rt_imm(line, rs, rt, imm);
 
-            // print rs, rt, imm
-            printf("sub rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+            instruction[1] = atoi(&rs[1]);
+            instruction[2] = atoi(&rt[1]);
+            instruction[3] = atoi(imm);
         }
 
         if (strcmp(word, "set") == 0)
@@ -118,15 +157,13 @@ char *read_instructions(char *input)
             // above will set #3 = #0 + 1
             // we want to get rs, rt, imm
             // without modifying the original string
-            char *rs = malloc(sizeof(char) * 2);
-            char *rt = malloc(sizeof(char) * 2);
-            char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
             parse_rs_rt_imm(line, rs, rt, imm);
 
-            // print rs, rt, imm
-            printf("set rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+            instruction[1] = atoi(&rs[1]);
+            instruction[2] = atoi(&rt[1]);
+            instruction[3] = atoi(imm);
         }
 
         if (strcmp(word, "jeq") == 0)
@@ -135,15 +172,13 @@ char *read_instructions(char *input)
             // above will jump one line if #2 == #0 && 0
             // we want to get rs, rt, imm
             // without modifying the original string
-            char *rs = malloc(sizeof(char) * 2);
-            char *rt = malloc(sizeof(char) * 2);
-            char *imm = malloc(sizeof(char) * 2);
 
             // get rs, rt, imm
             parse_rs_rt_imm(line, rs, rt, imm);
 
-            // print rs, rt, imm
-            printf("jeq rs: %s, rt: %s, imm: %s\n", rs, rt, imm);
+            instruction[1] = atoi(&rs[1]);
+            instruction[2] = atoi(&rt[1]);
+            instruction[3] = atoi(imm);
         }
 
         if (strcmp(word, "j") == 0)
@@ -152,7 +187,6 @@ char *read_instructions(char *input)
             // above will jump 0 lines
             // we want to get imm
             // without modifying the original string
-            char *imm = malloc(sizeof(char) * 2);
 
             // get imm
             int i = 0;
@@ -166,32 +200,19 @@ char *read_instructions(char *input)
                 i++;
             }
 
-            // print imm
-            printf("j imm: %s\n", imm);
-        }
-
-        if (strcmp(word, "input") == 0)
-        {
-            // print input
-            printf("input\n");
-        }
-
-        if (strcmp(word, "exit") == 0)
-        {
-            // print input
-            printf("exit\n");
-        }
-
-        if (strcmp(word, "print") == 0)
-        {
-            // print input
-            printf("print\n");
+            instruction[1] = atoi(imm);
         }
 
         line = strtok(NULL, "\n");
 
-        // free word
+        // free up memory
         free(word);
+        free(rs);
+        free(rt);
+        free(imm);
+
+        // print instruction
+        printf("instruction: %d, %d, %d, %d\n", instruction[0], instruction[1], instruction[2], instruction[3]);
     }
 
     return instructions;
@@ -270,9 +291,7 @@ int main(int argc, char **argv)
 
     if (buffer)
     {
-        char *instructions = read_instructions(buffer);
-
-        // print contents of instructions
+        int *instructions = read_instructions(buffer);
     }
     else
     {
